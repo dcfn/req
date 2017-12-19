@@ -194,12 +194,20 @@ func (r *Req) Do(method, rawurl string, vs ...interface{}) (resp *Resp, err erro
 		switch vv := v.(type) {
 		case Header:
 			for key, value := range vv {
-				req.Header.Add(key, value)
+				if key == "X-WSSE" {
+					req.Header["X-WSSE"] = []string{value}
+				} else {
+					req.Header.Add(key, value)
+				}
 			}
 		case http.Header:
 			for key, values := range vv {
 				for _, value := range values {
-					req.Header.Add(key, value)
+					if key == "X-WSSE" {
+						req.Header["X-WSSE"] = []string{value}
+					} else {
+						req.Header.Add(key, value)
+					}
 				}
 			}
 		case *bodyJson:
